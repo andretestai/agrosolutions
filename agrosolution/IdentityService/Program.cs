@@ -1,4 +1,5 @@
 using IdentityService.Services;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,9 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseAuthorization();
+app.UseMetricServer();
+app.UseHttpMetrics();
 app.MapControllers();
+app.MapMetrics();
 
 app.Run();
