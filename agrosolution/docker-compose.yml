@@ -1,0 +1,61 @@
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  identity-service:
+    build:
+      context: ./IdentityService
+      dockerfile: Dockerfile
+    container_name: identity-service
+    ports:
+      - "5001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  property-service:
+    build:
+      context: ./PropertyService
+      dockerfile: Dockerfile
+    container_name: property-service
+    ports:
+      - "5002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  ingestion-service:
+    build:
+      context: ./IngestionService
+      dockerfile: Dockerfile
+    container_name: ingestion-service
+    ports:
+      - "5003:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__User=guest
+      - RabbitMQ__Pass=guest
+    depends_on:
+      - rabbitmq
+
+  alert-service:
+    build:
+      context: ./AlertService
+      dockerfile: Dockerfile
+    container_name: alert-service
+    ports:
+      - "5004:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RabbitMQ__Host=rabbitmq
+      - RabbitMQ__User=guest
+      - RabbitMQ__Pass=guest
+    depends_on:
+      - rabbitmq

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: property-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: property-service
+  template:
+    metadata:
+      labels:
+        app: property-service
+    spec:
+      containers:
+      - name: property-service
+        image: property-service:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: property-service
+spec:
+  selector:
+    app: property-service
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: NodePort
