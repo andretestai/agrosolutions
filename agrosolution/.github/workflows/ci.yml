@@ -1,0 +1,41 @@
+name: CI Pipeline - AgroSolutions
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restaurar dependências
+        run: dotnet restore AgroSolutions.sln
+
+      - name: Build da solução
+        run: dotnet build AgroSolutions.sln --no-restore -c Release
+
+      - name: Rodar testes unitários
+        run: dotnet test AgroSolution.Tests/AgroSolution.Tests.csproj --no-build -c Release --verbosity normal
+
+      - name: Build Docker - IdentityService
+        run: docker build -t identity-service:latest ./IdentityService
+
+      - name: Build Docker - PropertyService
+        run: docker build -t property-service:latest ./PropertyService
+
+      - name: Build Docker - IngestionService
+        run: docker build -t ingestion-service:latest ./IngestionService
+
+      - name: Build Docker - AlertService
+        run: docker build -t alert-service:latest ./AlertService
