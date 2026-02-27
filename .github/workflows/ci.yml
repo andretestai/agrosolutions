@@ -20,10 +20,10 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restaurar dependências
-        run: dotnet restore agrosolutions.sln
+        run: dotnet restore agrosolution.sln
 
       - name: Build da solução
-        run: dotnet build agrosolutions.sln --no-restore -c Release
+        run: dotnet build agrosolution.sln --no-restore -c Release
 
       - name: Rodar testes unitários
         run: dotnet test AgroSolution.Tests/AgroSolution.Tests.csproj --no-build -c Release --verbosity normal
